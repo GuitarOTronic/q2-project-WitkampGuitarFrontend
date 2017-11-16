@@ -9488,9 +9488,23 @@ margin: 0 auto;
 body{
   padding-top: 7rem;
 }
+
+.paulPicDiv{
+  position: fixed;
+}
 #aboutPaulPic{
   padding: 1rem;
+
 }
 .displayMe {
   display:block;
+}
+.commentTitle{
+  color: red;
+}
+.noteTitle{
+  color:#295135;
+}
+.contentColor{
+  color:#5d5959
 }
