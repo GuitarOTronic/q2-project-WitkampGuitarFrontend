@@ -5041,6 +5041,7 @@ tbody.collapse.show {
   margin-bottom: 2rem;
   /*background-color: #e9ecef;*/
   background-image: url(../assets/pics/jumbo1.JPG);
+  opacity: 0.8;
   background-repeat: no-repeat;
   background-size: 100%;
   border-radius: 0.3rem;
@@ -9445,13 +9446,19 @@ table-success, table-info, table-warning, table-danger,
   padding: 8rem;
 }
 .jumbotron h1{
-  text-align: left;
+  text-align: center;
+  color:#fbfbfb;
+  font-size:3.7rem;
+
 }
 .center{
 margin: 0 auto;
 }
 .marginUp{
   margin-top: 1rem;
+}
+.marginDown{
+  margin-bottom: 1rem;
 }
 .margUp{
  margin-top: 10rem;
@@ -9494,7 +9501,8 @@ body{
 }
 #aboutPaulPic{
   padding: 1rem;
-
+  width: 40%;
+  position: fixed;
 }
 .displayMe {
   display:block;

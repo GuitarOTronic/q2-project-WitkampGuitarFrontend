@@ -107,13 +107,17 @@ function addComments(note_id, newForm, newContainer){
       comment.classList.add(`comment-${note_id}`)
       comment.classList.add('contentColor')
 
+      let newLine = document.createElement('hr')
+
+
       newContainer.appendChild(commentTitle)
       newContainer.appendChild(comment)
+      newContainer.appendChild(newLine)
 
       // newForm.prepend(comment)
       // newForm.prepend(commentTitle)
 
-      console.log(comment);
+
 
 
 
@@ -138,7 +142,7 @@ function getNote(note_id){
 
   return axios.get(`${baseURL}/notes/${note_id}`)
   .then(note=>{
-    console.log(note.data.result[0].content);
+
     clearNotes()
     let newContent = document.createElement('p')
     let newContainer = document.createElement('div')
@@ -187,9 +191,8 @@ newNoteBtn.addEventListener('click', event => {
 
 
 
-function editNote(note_id, content){
+function editNote(note_id, content, editDelNoteDiv){
   clearNotes()
-  console.log('heyo');
   let newTitle = document.createElement('h4')
   let newForm = document.createElement('form')
   let newContainer = document.createElement('div')
@@ -207,11 +210,12 @@ function editNote(note_id, content){
   newButton.classList.add('flexCol')
   newButton.innerHTML='Edit note'
 
-
   noteContainer.prepend(newContainer)
   newContainer.appendChild(newForm)
   newForm.appendChild(newTitle)
   newForm.appendChild(newComment)
+
+
   newForm.appendChild(newButton)
   newComment.focus()
 $(newComment).height( $(newComment)[0].scrollHeight)
@@ -254,46 +258,51 @@ function update(id) {
         let newComment = document.createElement('textarea')
         let newDeleteNote = document.createElement('button')
         let newEdit = document.createElement('a')
-
+        let newLine = document.createElement('hr')
+        let commentBtn = document.createElement('button')
+        let newButton = document.createElement('button')
+        let editDelNoteDiv = document.createElement('div')
         newEdit.innerHTML= 'Edit Note'
         newComment.placeholder='Comment'
         newForm.name=`#${el.id}`
 
 
-        let newButton = document.createElement('button')
         newButton.type='submit'
         newButton.classList.add('bg-success')
         newButton.classList.add('btn')
         newButton.classList.add('btn-large')
         newButton.classList.add('flexCol')
         newButton.classList.add('commentBtn')
-        // newButton.classList.add('float-left')
+        // newButton.classList.add('float-right')
+        newButton.classList.add('newComment')
+
+        // newButton.style.display='none'
+
+        commentBtn.classList='bg-success btn btn-small flexCol'
 
         newTitle.classList.add('noteTitle')
         newContent.classList.add('contentColor')
 
         newEdit.href='#'
         newEdit.classList.add('editNote')
-
+        newEdit.classList.add('padDown')
 
 
         newDeleteNote.innerHTML ='Delete Note'
         newDeleteNote.role='button'
-        newDeleteNote.classList='btn btn-small '
+        newDeleteNote.classList='btn btn-small bg-success marginDown'
         newDeleteNote.addEventListener('click', event=>{
           event.preventDefault()
-          // deleteComment(1, newForm, noteContainer)
           deleteNote(el.id)
         })
-
-
-
 
         // newDeleteComment.classList.add('float-right')
 
         newButton.id=`submit-${el.id}`
         newDeleteNote.id=`edit-${el.id}`
         newButton.innerHTML='Submit'
+        newButton.classList.add('marginDown')
+
         newContainer.classList.add('studentNote')
         newContainer.classList.add('displayMe')
         newContainer.classList.add('containerSize')
@@ -301,14 +310,15 @@ function update(id) {
         noteContainer.prepend(newContainer)
         newContainer.appendChild(newTitle)
         newContainer.appendChild(newContent)
+        newContainer.appendChild(newLine)
 
         addComments(el.id, newForm, newContainer)
 
         newContainer.appendChild(newForm)
         newForm.appendChild(newComment)
         newForm.appendChild(newButton)
-        newForm.appendChild(newDeleteNote)
         newForm.appendChild(newEdit)
+        newForm.appendChild(newDeleteNote)
 
 
         //moment.js formats dates and times from a timestamp
@@ -319,8 +329,12 @@ function update(id) {
         newEdit.addEventListener('click', event=>{
           content=el.content
           event.preventDefault()
-          editNote(`${el.id}`, content)
+          editNote(`${el.id}`, content, editDelNoteDiv)
         })
+
+
+        newForm.appendChild(editDelNoteDiv)
+        editDelNoteDiv.appendChild(newEdit)
 
       })
       addListenersToCommentButtons(notes.data)
