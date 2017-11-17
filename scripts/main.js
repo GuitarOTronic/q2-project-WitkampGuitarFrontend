@@ -9,6 +9,7 @@ let dropDown = document.querySelector('#pickStudent')
 function popStudentDropdown() {
   axios.get(`${baseURL}/student`)
     .then(result => {
+
       result.data.forEach(el => {
         let newOption = document.createElement('option')
         newOption.innerHTML = el.name
@@ -22,6 +23,7 @@ function popStudentDropdown() {
 }
 let newStudentBtn = document.querySelector('#NewStudent')
 newStudentBtn.addEventListener('click', event=>{
+  event.preventDefault()
   makeNewStudent()
   })
 
@@ -33,20 +35,36 @@ function makeNewStudent(){
   let newStudentForm = document.createElement('form')
   let newstudentName = document.createElement('textarea')
   let newSubmitButton = document.createElement('button')
+  let newTitle = document.createElement('h4')
+  newTitle.innerHTML = 'Enter Student\'s Name'
   newSubmitButton.classList='btn bg-success btn-small flexCol'
   newSubmitButton.innerHTML = 'Create New Student'
-  // newButton.classList.add('bg-success')
-  // newButton.classList.add('btn')
-  // newButton.classList.add('btn-large')
-  // newButton.classList.add('flexCol'
 
   noteContainer.append(newContainer)
+  newContainer.append(newTitle)
   newContainer.append( newStudentForm )
   newStudentForm.append(newstudentName)
   newStudentForm.append(newSubmitButton)
+  newSubmitButton.addEventListener('click', event=>{
+    event.preventDefault()
+    submitStudent(newstudentName.value)
+
+  })
 }
 
+function submitStudent(name){
 
+  axios.post(`${baseURL}/students`,{name})
+  .then(result=>{
+
+    let newOption = document.createElement('option')
+    newOption.innerHTML = result.data[0].name
+    newOption.value = result.data[0].id
+    dropDown.append(newOption)
+
+    update(result.data[0].id)
+  })
+}
 var allNotes = document.querySelector('#allNotes')
 var noteContainer = document.querySelector('#noteContainer')
 
@@ -133,121 +151,8 @@ function getNote(note_id){
   })
 }
 
-//populates student's notes
-function update(id) {
-  var noteContent = document.querySelector('#noteContent')
-  var noteTitle = document.querySelector('#noteTitle')
-  //gets all of one student's notes
-
-  return axios.get(`${baseURL}/student/${id}`)
-    .then((notes) => {
-      clearNotes()
-      //for each note for this student create a new div, p, textarea and h4
-      //then add the date and content for that note in the p and h4
-      notes.data.forEach((el) => {
-
-        let newTitle = document.createElement('h4')
-        let newForm = document.createElement('form')
-        let newContent = document.createElement('p')
-        let newContainer = document.createElement('div')
-        let newComment = document.createElement('textarea')
-        let newDeleteNote = document.createElement('button')
-
-        newComment.placeholder='Comment'
-        newForm.name=`#${el.id}`
-
-
-        let newButton = document.createElement('button')
-        newButton.type='submit'
-        newButton.classList.add('bg-success')
-        newButton.classList.add('btn')
-        newButton.classList.add('btn-large')
-        newButton.classList.add('flexCol')
-        newButton.classList.add('commentBtn')
-        // newButton.classList.add('float-left')
-
-        newTitle.classList.add('noteTitle')
-        newContent.classList.add('contentColor')
-
-        newDeleteNote.innerHTML ='Delete Note'
-        // newDeleteNote.href=`#${el.id}`
-
-
-        newDeleteNote.role='button'
-        newDeleteNote.classList='btn btn-small '
-        newDeleteNote.addEventListener('click', event=>{
-          event.preventDefault()
-          // deleteComment(1, newForm, noteContainer)
-          deleteNote(el.id)
-        })
-
-
-
-
-        // newDeleteComment.classList.add('float-right')
-
-        newButton.id=`submit-${el.id}`
-        newDeleteNote.id=`edit-${el.id}`
-        newButton.innerHTML='Submit'
-        newContainer.classList.add('studentNote')
-        newContainer.classList.add('displayMe')
-
-        noteContainer.prepend(newContainer)
-        newContainer.appendChild(newTitle)
-        newContainer.appendChild(newContent)
-
-        addComments(el.id, newForm, newContainer)
-
-        newContainer.appendChild(newForm)
-        newForm.appendChild(newComment)
-        newForm.appendChild(newButton)
-        newForm.appendChild(newDeleteNote)
-
-
-        //moment.js formats dates and times from a timestamp
-        let date = moment(el.created_at).format('LL')
-        newContent.textContent = el.content
-        newTitle.textContent = date
-
-
-
-      })
-      addListenersToCommentButtons(notes.data)
-    })
-
-}
-//listener for update student notes
-dropDown.addEventListener('change', event => {
-  update(dropDown.value)
-})
-
-
-function destroyComments(note_id){
-  console.log('hello');
-  return axios.delete(`${baseURL}/comments/${note_id}`)
-}
-
-function deleteNote(note_id){
-  // console.log(noteId);
-  return axios.delete(`${baseURL}/notes/${note_id}`)
-  .then(result=>{
-    destroyComments(note_id)
-    update(dropDown.value)
-  })
-}
-
-
-
-// function deleteComment(id, form, noteContainer){
-//     getNote(id)
-//     clearNotes()
-//
-//     // noteContainer.append(form)
-//     // newContainer.append(form)
-// }
-
 //create new note then display it
-function createNote(id) {
+function createNote(id, currentNote) {
   //hide shown notes
   let displayedNotes = document.querySelectorAll('.displayMe')
   displayedNotes.forEach(el => {
@@ -272,8 +177,131 @@ function createNote(id) {
 let newNoteBtn = document.querySelector('#newNote')
 newNoteBtn.addEventListener('click', event => {
   event.preventDefault()
-  // console.log(dropDown.value);
   if(dropDown.value){
   createNote(dropDown.value)}
 
 })
+
+
+function editNote(note_id, content){
+  axios.put(`${baseURL}/notes/${note_id}`, {content:content})
+  .then(note=>{
+    console.log(note);
+  })
+
+
+}
+
+
+
+//populates student's notes
+function update(id) {
+  var noteContent = document.querySelector('#noteContent')
+  var noteTitle = document.querySelector('#noteTitle')
+  //gets all of one student's notes
+
+  return axios.get(`${baseURL}/student/${id}`)
+    .then((notes) => {
+      clearNotes()
+      //for each note for this student create a new div, p, textarea and h4
+      //then add the date and content for that note in the p and h4
+      notes.data.forEach((el) => {
+
+        let newTitle = document.createElement('h4')
+        let newForm = document.createElement('form')
+        let newContent = document.createElement('p')
+        let newContainer = document.createElement('div')
+        let newComment = document.createElement('textarea')
+        let newDeleteNote = document.createElement('button')
+        let newEdit = document.createElement('a')
+
+        newEdit.innerHTML= 'Edit Note'
+        newComment.placeholder='Comment'
+        newForm.name=`#${el.id}`
+
+
+        let newButton = document.createElement('button')
+        newButton.type='submit'
+        newButton.classList.add('bg-success')
+        newButton.classList.add('btn')
+        newButton.classList.add('btn-large')
+        newButton.classList.add('flexCol')
+        newButton.classList.add('commentBtn')
+        // newButton.classList.add('float-left')
+
+        newTitle.classList.add('noteTitle')
+        newContent.classList.add('contentColor')
+
+        newEdit.href='#'
+        newEdit.classList.add('editNote')
+
+
+
+        newDeleteNote.innerHTML ='Delete Note'
+        newDeleteNote.role='button'
+        newDeleteNote.classList='btn btn-small '
+        newDeleteNote.addEventListener('click', event=>{
+          event.preventDefault()
+          // deleteComment(1, newForm, noteContainer)
+          deleteNote(el.id)
+        })
+
+
+
+
+        // newDeleteComment.classList.add('float-right')
+
+        newButton.id=`submit-${el.id}`
+        newDeleteNote.id=`edit-${el.id}`
+        newButton.innerHTML='Submit'
+        newContainer.classList.add('studentNote')
+        newContainer.classList.add('displayMe')
+        newContainer.classList.add('containerSize')
+
+        noteContainer.prepend(newContainer)
+        newContainer.appendChild(newTitle)
+        newContainer.appendChild(newContent)
+
+        addComments(el.id, newForm, newContainer)
+
+        newContainer.appendChild(newForm)
+        newForm.appendChild(newComment)
+        newForm.appendChild(newButton)
+        newForm.appendChild(newDeleteNote)
+        newForm.appendChild(newEdit)
+
+
+        //moment.js formats dates and times from a timestamp
+        let date = moment(el.created_at).format('LL')
+        newContent.textContent = el.content
+        newTitle.textContent = date
+
+        newEdit.addEventListener('click', event=>{
+          content=el.content
+          event.preventDefault()
+          editNote(`${el.id}`, content)
+        })
+
+      })
+      addListenersToCommentButtons(notes.data)
+    })
+
+}
+//listener for update student notes
+dropDown.addEventListener('change', event => {
+  update(dropDown.value)
+})
+
+
+function destroyComments(note_id){
+  return axios.delete(`${baseURL}/comments/${note_id}`)
+}
+
+function deleteNote(note_id){
+  // console.log(noteId);
+  return axios.delete(`${baseURL}/notes/${note_id}`)
+  .then(result=>{
+    destroyComments(note_id)
+    update(dropDown.value)
+  })
+}

@@ -9500,11 +9500,14 @@ body{
   display:block;
 }
 .commentTitle{
-  color: red;
+  color: #0C435E;
 }
 .noteTitle{
   color:#295135;
 }
 .contentColor{
   color:#5d5959
+}
+.containerSize{
+  width:30rem;
 }
