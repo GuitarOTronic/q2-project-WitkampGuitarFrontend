@@ -1,13 +1,14 @@
-const localhostURL = 'http://localhost:3000/notes'
-const herokuURL = 'https://ajax-blog-api.herokuapp.com/posts'
-const baseURL = window.location.href.includes('127.0.0.1') ? localhostURL : herokuURL
+const localhostURL = 'http://localhost:3000'
+const herokuURL = 'https://obscure-tundra-13055.herokuapp.com'
+// const baseURL = localhostURL
+const baseURL= window.location.href.includes('127.0.0.1') ? localhostURL : herokuURL
 
 //dynamically populates students in dropdown
 document.body.onload = popStudentDropdown
 let dropDown = document.querySelector('#pickStudent')
 
 function popStudentDropdown() {
-  axios.get(`${baseURL}/student`)
+  axios.get(`${baseURL}/students`)
     .then(result => {
 
       result.data.forEach(el => {
@@ -167,7 +168,7 @@ function createNote(id, currentNote) {
     event.preventDefault()
     let noteContent = document.querySelector('#content')
 
-     axios.post(`${baseURL}/student/${id}`, {note:noteContent.value})
+     axios.post(`${baseURL}/students/${id}`, {note:noteContent.value})
      .then(result=>{
        update(id)
      })
@@ -239,7 +240,7 @@ function update(id) {
   var noteTitle = document.querySelector('#noteTitle')
   //gets all of one student's notes
 
-  return axios.get(`${baseURL}/student/${id}`)
+  return axios.get(`${baseURL}/students/${id}`)
     .then((notes) => {
       clearNotes()
       //for each note for this student create a new div, p, textarea and h4
