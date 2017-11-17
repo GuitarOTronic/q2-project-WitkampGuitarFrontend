@@ -9511,3 +9511,8 @@ body{
 .containerSize{
   width:30rem;
 }
+
+.showAll{
+  width:100%;
+  height:100%;
+}

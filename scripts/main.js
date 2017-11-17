@@ -183,11 +183,50 @@ newNoteBtn.addEventListener('click', event => {
 })
 
 
+
+
+
 function editNote(note_id, content){
-  axios.put(`${baseURL}/notes/${note_id}`, {content:content})
-  .then(note=>{
-    console.log(note);
+  clearNotes()
+  console.log('heyo');
+  let newTitle = document.createElement('h4')
+  let newForm = document.createElement('form')
+  let newContainer = document.createElement('div')
+  let newComment = document.createElement('textarea')
+  let newButton = document.createElement('button')
+  newTitle.innerHTML='Edit Note'
+  newComment.innerHTML=content
+
+  newComment.classList.add('showAll')
+  newContainer.classList.add('containerSize')
+
+  newButton.classList.add('bg-success')
+  newButton.classList.add('btn')
+  newButton.classList.add('btn-large')
+  newButton.classList.add('flexCol')
+  newButton.innerHTML='Edit note'
+
+
+  noteContainer.prepend(newContainer)
+  newContainer.appendChild(newForm)
+  newForm.appendChild(newTitle)
+  newForm.appendChild(newComment)
+  newForm.appendChild(newButton)
+  newComment.focus()
+$(newComment).height( $(newComment)[0].scrollHeight)
+
+  newButton.addEventListener('click', event=>{
+    event.preventDefault()
+    content=newComment.value
+
+    axios.put(`${baseURL}/notes/${note_id}`, {content})
+    .then(note=>{
+      update(dropDown.value)
+
+    })
   })
+
+
 
 
 }
